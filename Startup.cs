@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FirstAPI.Model;
 using Microsoft.EntityFrameworkCore;
+using System.Timers;
 
 namespace FirstAPI
 {
@@ -29,8 +30,6 @@ namespace FirstAPI
         {
             services.AddControllers();
             services.AddSwaggerGen();
-    //        services.AddDbContext<GameContext>(opt =>
-    //opt.UseInMemoryDatabase("GameContextDataBase"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,7 +45,6 @@ namespace FirstAPI
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Employee API V1");
-                //c.RoutePrefix = string.Empty;
             });
 
             app.UseHttpsRedirection();
@@ -59,6 +57,22 @@ namespace FirstAPI
             {
                 endpoints.MapControllers();
             });
+            Timer timer = new Timer();
+            timer.Interval = 1000;
+
+            // Hook up the Elapsed event for the timer. 
+            timer.Elapsed += OnTimedEvent;
+
+            // Have the timer fire repeated events (true is the default)
+            timer.AutoReset = true;
+
+            // Start the timer
+            timer.Enabled = true;
+
+        }
+        private static void OnTimedEvent(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            GameManager.DeleteOldGames();
         }
     }
 }
